@@ -412,7 +412,22 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjahr59eyXNbIdFmp85Vr-EODVb8HWmMw",
+    authDomain: "celestial-joyeria.firebaseapp.com",
+    projectId: "celestial-joyeria",
+    storageBucket: "celestial-joyeria.firebasestorage.app",
+    messagingSenderId: "4944190111",
+    appId: "1:4944190111:web:d7d284d349a409d634a0aa"
+  };
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db = getFirestore(firebaseApp);
+  const productsCol = collection(db, 'productos');
+
   const ADMIN_PIN = "1234"; // Cambiá este código antes de compartir el enlace
 
   const CATEGORIES = ["Todos","Collares","Anillos","Aretes","Pulseras","Otros"];
@@ -492,10 +507,9 @@
         e.stopPropagation();
         const id = btn.dataset.del;
         if(confirm('¿Eliminar esta joya del catálogo?')){
-          products = products.filter(p=>p.id !== id);
-          saveProducts();
-          renderGrid();
-          showToast('Joya eliminada');
+          deleteDoc(doc(productsCol, id))
+            .then(()=> showToast('Joya eliminada'))
+            .catch(()=> showToast('Error al eliminar. Intentá de nuevo.', true));
         }
       });
     });
@@ -507,23 +521,15 @@
     return d.innerHTML;
   }
 
-  async function loadProducts(){
-    try{
-      const res = await window.storage.get('productos', true);
-      products = res && res.value ? JSON.parse(res.value) : [];
-    }catch(e){
-      products = [];
-    }
-    renderGrid();
-  }
-
-  async function saveProducts(){
-    try{
-      const result = await window.storage.set('productos', JSON.stringify(products), true);
-      if(!result) showToast('No se pudo guardar el catálogo.', true);
-    }catch(e){
-      showToast('Error al guardar. Intentá de nuevo.', true);
-    }
+  function loadProducts(){
+    const q = query(productsCol, orderBy('createdAt', 'desc'));
+    onSnapshot(q, (snapshot)=>{
+      products = snapshot.docs.map(d => d.data());
+      renderGrid();
+    }, (err)=>{
+      console.error(err);
+      showToast('No se pudo conectar con el catálogo.', true);
+    });
   }
 
   document.getElementById('searchInput').addEventListener('input', (e)=>{
@@ -654,14 +660,16 @@
       image: pendingImageDataUrl,
       createdAt: Date.now()
     };
-    products.unshift(product);
     submitProductBtn.disabled = true;
     submitProductBtn.textContent = "Publicando...";
-    await saveProducts();
+    try{
+      await setDoc(doc(productsCol, product.id), product);
+      closeUploadModal();
+      showToast('¡Joya publicada!');
+    }catch(err){
+      showToast('Error al guardar. Intentá de nuevo.', true);
+    }
     submitProductBtn.textContent = "Publicar joya";
-    closeUploadModal();
-    renderGrid();
-    showToast('¡Joya publicada!');
   });
 
   /* ---------- init ---------- */
