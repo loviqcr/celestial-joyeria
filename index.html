@@ -123,23 +123,23 @@
   .pill:hover:not(.active){border-color:var(--gold-soft); color:var(--twilight);}
 
   .category-clouds{
-    background:#12141c;
+    background:var(--sky-pale);
     background-image:
-      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+      linear-gradient(rgba(175,216,240,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(175,216,240,0.4) 1px, transparent 1px);
     background-size:26px 26px;
     padding:34px 20px;
   }
   .category-clouds .pills{justify-content:center; flex:none; gap:18px 22px;}
   .category-clouds .pill{
-    background:#12141c; color:#fff; border:2px solid #fff; box-shadow:none;
+    background:var(--pearl); color:var(--twilight); border:2px solid var(--sky-deep); box-shadow:var(--shadow);
     padding:20px 32px; font-size:0.92rem; letter-spacing:0.02em;
     border-radius:48% 52% 58% 42% / 48% 42% 58% 52%;
   }
   .category-clouds .pill:nth-child(2n){border-radius:55% 45% 48% 52% / 42% 55% 45% 58%;}
   .category-clouds .pill:nth-child(3n){border-radius:42% 58% 52% 48% / 58% 48% 52% 42%;}
-  .category-clouds .pill:hover:not(.active){border-color:#fff; color:#fff; transform:translateY(-2px);}
-  .category-clouds .pill.active{background:#fff; color:#12141c; border-color:#fff;}
+  .category-clouds .pill:hover:not(.active){border-color:var(--gold-soft); color:var(--twilight);}
+  .category-clouds .pill.active{background:var(--gold); color:var(--pearl-warm); border-color:var(--gold);}
   @media (max-width:600px){
     .category-clouds .pill{padding:16px 24px; font-size:0.82rem;}
     .category-clouds .pills{gap:14px 16px;}
