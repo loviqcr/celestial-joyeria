@@ -125,19 +125,26 @@
   .category-clouds{
     padding:34px 20px;
   }
-  .category-clouds .pills{justify-content:center; flex:none; gap:18px 22px;}
+  .category-clouds .pills{justify-content:center; flex:none; gap:6px 10px;}
   .category-clouds .pill{
-    background:var(--pearl); color:var(--twilight); border:2px solid var(--sky-deep); box-shadow:var(--shadow);
-    padding:20px 32px; font-size:0.92rem; letter-spacing:0.02em;
-    border-radius:48% 52% 58% 42% / 48% 42% 58% 52%;
+    position:relative; width:148px; height:92px; padding:0; background:none; border:none;
+    display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
   }
-  .category-clouds .pill:nth-child(2n){border-radius:55% 45% 48% 52% / 42% 55% 45% 58%;}
-  .category-clouds .pill:nth-child(3n){border-radius:42% 58% 52% 48% / 58% 48% 52% 42%;}
-  .category-clouds .pill:hover:not(.active){border-color:var(--gold-soft); color:var(--twilight);}
-  .category-clouds .pill.active{background:var(--gold); color:var(--pearl-warm); border-color:var(--gold);}
+  .category-clouds .pill svg{
+    position:absolute; inset:0; width:100%; height:100%;
+    fill:var(--pearl); stroke:var(--sky-deep); stroke-width:1;
+    transition:fill .2s ease, stroke .2s ease;
+  }
+  .category-clouds .pill .cloud-label{
+    position:relative; z-index:1; font-size:0.85rem; color:var(--twilight);
+    letter-spacing:0.02em; padding-top:12%; text-align:center;
+  }
+  .category-clouds .pill:hover:not(.active) svg{stroke:var(--gold-soft);}
+  .category-clouds .pill.active svg{fill:var(--gold); stroke:var(--gold);}
+  .category-clouds .pill.active .cloud-label{color:var(--pearl-warm);}
   @media (max-width:600px){
-    .category-clouds .pill{padding:16px 24px; font-size:0.82rem;}
-    .category-clouds .pills{gap:14px 16px;}
+    .category-clouds .pill{width:112px; height:70px;}
+    .category-clouds .pill .cloud-label{font-size:0.72rem;}
   }
   .search-input{
     border:1px solid var(--sky-deep); background:var(--pearl); border-radius:999px;
@@ -580,10 +587,15 @@
     setTimeout(()=> toastEl.classList.remove('show'), 2600);
   }
 
+  const CLOUD_PATH = "M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z";
+
   function renderPills(){
-    pillsWrap.innerHTML = CATEGORIES.map(c =>
-      `<button class="pill ${c===currentFilter?'active':''}" data-cat="${c}">${c}</button>`
-    ).join('');
+    pillsWrap.innerHTML = CATEGORIES.map(c => `
+      <button class="pill ${c===currentFilter?'active':''}" data-cat="${c}">
+        <svg viewBox="0 0 24 24"><path d="${CLOUD_PATH}"></path></svg>
+        <span class="cloud-label">${c}</span>
+      </button>
+    `).join('');
     pillsWrap.querySelectorAll('.pill').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         currentFilter = btn.dataset.cat;
