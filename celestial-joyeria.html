@@ -314,7 +314,7 @@
 <div class="filter-bar">
   <div class="pills" id="pills"></div>
   <input type="text" class="search-input" id="searchInput" placeholder="Buscar joya...">
-  <button class="upload-btn" id="openUploadBtn" aria-label="Subir nueva joya">+ Subir joya</button>
+  <button class="upload-btn" id="openUploadBtn" aria-label="Subir nueva joya" style="display:none;">+ Subir joya</button>
 </div>
 
 <main class="catalog" id="catalogo">
@@ -347,7 +347,7 @@
       Seguinos en Facebook
     </a>
   </div>
-  <div>Celestial Joyería.cr · hecho con cariño en Costa Rica</div>
+  <div>Celestial Joyería.cr · hecho con cariño en Costa Rica <button id="adminLoginBtn" aria-label="Admin" style="background:none; border:none; color:inherit; opacity:.35; cursor:pointer; font-size:0.7rem; padding:2px 6px; vertical-align:middle;">•</button></div>
 </footer>
 
 <!-- PIN overlay -->
@@ -464,8 +464,8 @@
         <div class="empty-state">
           <svg viewBox="0 0 24 24" fill="none" stroke="#C9A66B" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><path d="M12 6 L13 11 L18 12 L13 13 L12 18 L11 13 L6 12 L11 11 Z" fill="#C9A66B"/></svg>
           <h3>${products.length===0 ? 'Tu catálogo aún está en blanco' : 'No encontramos joyas con ese filtro'}</h3>
-          <p>${products.length===0 ? 'Subí la foto de tu primera pieza y empezá a brillar.' : 'Probá con otra categoría o búsqueda.'}</p>
-          ${products.length===0 ? '<button class="upload-btn" id="emptyUploadBtn">+ Subir mi primera joya</button>' : ''}
+          <p>${products.length===0 ? (isAdmin ? 'Subí la foto de tu primera pieza y empezá a brillar.' : 'Muy pronto vas a encontrar piezas hermosas acá.') : 'Probá con otra categoría o búsqueda.'}</p>
+          ${isAdmin && products.length===0 ? '<button class="upload-btn" id="emptyUploadBtn">+ Subir mi primera joya</button>' : ''}
         </div>`;
       const emptyBtn = document.getElementById('emptyUploadBtn');
       if(emptyBtn) emptyBtn.addEventListener('click', requestUpload);
@@ -550,6 +550,7 @@
   function submitPin(){
     if(pinInput.value === ADMIN_PIN){
       isAdmin = true;
+      document.getElementById('openUploadBtn').style.display = '';
       closePin();
       renderGrid();
       if(pendingAction) pendingAction();
@@ -568,6 +569,7 @@
     else{ openPin(openUploadModal); }
   }
   document.getElementById('openUploadBtn').addEventListener('click', requestUpload);
+  document.getElementById('adminLoginBtn').addEventListener('click', ()=>{ if(!isAdmin) openPin(null); });
 
   /* ---------- Upload modal ---------- */
   const uploadOverlay = document.getElementById('uploadOverlay');
