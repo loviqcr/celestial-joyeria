@@ -127,20 +127,17 @@
   }
   .category-clouds .pills{justify-content:center; flex:none; gap:6px 10px;}
   .category-clouds .pill{
-    position:relative; width:148px; height:92px; padding:0; background:none; border:none;
-    display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
+    position:relative; width:150px; height:96px; padding:0; background:none; border:none; cursor:pointer;
   }
-  .category-clouds .pill svg{
-    position:absolute; inset:0; width:100%; height:100%;
-    fill:var(--pearl); stroke:var(--sky-deep); stroke-width:1;
-    transition:fill .2s ease, stroke .2s ease;
-  }
+  .category-clouds .pill svg{position:absolute; inset:0; width:100%; height:100%;}
+  .category-clouds .pill .cloud-outline{fill:var(--sky-deep); transition:fill .2s ease;}
+  .category-clouds .pill .cloud-fill{fill:var(--pearl); transition:fill .2s ease;}
   .category-clouds .pill .cloud-label{
-    position:relative; z-index:1; font-size:0.85rem; color:var(--twilight);
-    letter-spacing:0.02em; padding-top:12%; text-align:center;
+    position:absolute; top:58%; left:50%; transform:translate(-50%,-50%); z-index:1;
+    font-size:0.85rem; color:var(--twilight); letter-spacing:0.02em; text-align:center; white-space:nowrap;
   }
-  .category-clouds .pill:hover:not(.active) svg{stroke:var(--gold-soft);}
-  .category-clouds .pill.active svg{fill:var(--gold); stroke:var(--gold);}
+  .category-clouds .pill:hover:not(.active) .cloud-outline{fill:var(--gold-soft);}
+  .category-clouds .pill.active .cloud-outline, .category-clouds .pill.active .cloud-fill{fill:var(--gold);}
   .category-clouds .pill.active .cloud-label{color:var(--pearl-warm);}
   @media (max-width:600px){
     .category-clouds .pill{width:112px; height:70px;}
@@ -587,12 +584,26 @@
     setTimeout(()=> toastEl.classList.remove('show'), 2600);
   }
 
-  const CLOUD_PATH = "M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z";
+  const CLOUD_SHAPES = `
+    <ellipse cx="100" cy="62" rx="92" ry="26"/>
+    <circle cx="28" cy="58" r="20"/>
+    <circle cx="55" cy="38" r="24"/>
+    <circle cx="90" cy="30" r="27"/>
+    <circle cx="125" cy="36" r="25"/>
+    <circle cx="155" cy="52" r="21"/>
+    <circle cx="175" cy="65" r="16"/>
+    <circle cx="50" cy="80" r="16"/>
+    <circle cx="95" cy="86" r="18"/>
+    <circle cx="140" cy="80" r="16"/>
+  `;
 
   function renderPills(){
     pillsWrap.innerHTML = CATEGORIES.map(c => `
       <button class="pill ${c===currentFilter?'active':''}" data-cat="${c}">
-        <svg viewBox="0 0 24 24"><path d="${CLOUD_PATH}"></path></svg>
+        <svg viewBox="0 0 200 110">
+          <g class="cloud-outline" transform="translate(100 55) scale(1.08) translate(-100 -55)">${CLOUD_SHAPES}</g>
+          <g class="cloud-fill">${CLOUD_SHAPES}</g>
+        </svg>
         <span class="cloud-label">${c}</span>
       </button>
     `).join('');
