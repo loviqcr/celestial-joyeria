@@ -517,7 +517,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDjahr59eyXNbIdFmp85Vr-EODVb8HWmMw",
@@ -1046,6 +1046,22 @@
     const lines = cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price * i.qty)}`).join('\n');
     const message = `Hola! Quiero pedir:\n${lines}\n\nTotal: ${money(total)}`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+
+    const stockUpdates = cart.map(item=>{
+      const product = products.find(p => p.id === item.id);
+      if(product && typeof product.stock === 'number'){
+        const newStock = Math.max(0, product.stock - item.qty);
+        return updateDoc(doc(productsCol, item.id), { stock: newStock }).catch(()=>{});
+      }
+      return Promise.resolve();
+    });
+    Promise.all(stockUpdates).then(()=>{
+      cart = [];
+      saveCart();
+      renderCart();
+      closeCart();
+      showToast('¡Pedido enviado! Carrito vaciado.');
+    });
   });
 
   /* ---------- init ---------- */
