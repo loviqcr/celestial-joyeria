@@ -359,7 +359,7 @@
     </div>
     <p style="color:var(--twilight-soft); font-size:0.85rem; margin-top:-6px;">Ingresá el código para subir o eliminar joyas.</p>
     <div class="field pin-field" style="margin-top:16px;">
-      <input type="password" id="pinInput" inputmode="numeric" maxlength="6" placeholder="••••">
+      <input type="password" id="pinInput" maxlength="20" placeholder="••••">
     </div>
     <button class="submit-btn" id="pinSubmitBtn">Entrar</button>
   </div>
@@ -428,7 +428,7 @@
   const db = getFirestore(firebaseApp);
   const productsCol = collection(db, 'productos');
 
-  const ADMIN_PIN = "1234"; // Cambiá este código antes de compartir el enlace
+  const ADMIN_PIN = "Adwz1661,,";
 
   const CATEGORIES = ["Todos","Collares","Anillos","Aretes","Pulseras","Otros"];
   let products = [];
