@@ -152,13 +152,15 @@
     color:var(--gold); font-size:1rem;
   }
   .card:hover .sparkle{opacity:1;}
-  .card .delete-btn{
-    position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:50%;
-    background:rgba(255,253,249,0.92); border:1px solid var(--sky-deep); color:var(--danger);
+  .card .delete-btn, .card .edit-btn{
+    position:absolute; top:8px; width:28px; height:28px; border-radius:50%;
+    background:rgba(255,253,249,0.92); border:1px solid var(--sky-deep);
     display:flex; align-items:center; justify-content:center; font-size:0.9rem; line-height:1;
     opacity:0; transition:opacity .2s ease;
   }
-  .card:hover .delete-btn{opacity:1;}
+  .card .delete-btn{right:8px; color:var(--danger);}
+  .card .edit-btn{right:44px; color:var(--twilight);}
+  .card:hover .delete-btn, .card:hover .edit-btn{opacity:1;}
   .card-body{padding:16px 16px 18px;}
   .card-body h3{font-size:1.15rem; color:var(--twilight);}
   .card-body .desc{font-size:0.78rem; color:var(--twilight-soft); margin-top:4px; line-height:1.4;
@@ -369,7 +371,7 @@
 <div class="overlay" id="uploadOverlay">
   <div class="modal">
     <div class="modal-head">
-      <h2>Nueva joya</h2>
+      <h2 id="modalTitle">Nueva joya</h2>
       <button class="close-x" id="closeUploadBtn">✕</button>
     </div>
     <form id="productForm">
@@ -437,6 +439,7 @@
   let searchTerm = "";
   let pendingImageDataUrl = null;
   let pendingAction = null;
+  let editingId = null;
 
   const grid = document.getElementById('grid');
   const pillsWrap = document.getElementById('pills');
@@ -492,7 +495,7 @@
           <img src="${p.image}" alt="${escapeHtml(p.name)}">
           <span class="sparkle">✦</span>
           <span class="tag">${p.category}</span>
-          ${isAdmin ? `<button class="delete-btn" data-del="${p.id}" aria-label="Eliminar">✕</button>` : ''}
+          ${isAdmin ? `<button class="edit-btn" data-edit="${p.id}" aria-label="Editar">✎</button><button class="delete-btn" data-del="${p.id}" aria-label="Eliminar">✕</button>` : ''}
         </div>
         <div class="card-body">
           <h3>${escapeHtml(p.name)}</h3>
@@ -501,6 +504,14 @@
         </div>
       </div>
     `).join('');
+
+    grid.querySelectorAll('[data-edit]').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const product = products.find(p => p.id === btn.dataset.edit);
+        if(product) openUploadModal(product);
+      });
+    });
 
     grid.querySelectorAll('[data-del]').forEach(btn=>{
       btn.addEventListener('click', (e)=>{
@@ -587,14 +598,25 @@
   const prodName = document.getElementById('prodName');
   const prodPrice = document.getElementById('prodPrice');
 
-  function openUploadModal(){
+  function openUploadModal(product){
     form.reset();
-    pendingImageDataUrl = null;
-    dropZoneContent.innerHTML = `<div style="font-size:1.6rem; margin-bottom:6px;">📷</div><div class="hint"><b>Elegí una foto</b> desde tu compu o celular,<br>o arrastrala aquí.</div>`;
+    editingId = product ? product.id : null;
+    pendingImageDataUrl = product ? product.image : null;
+    document.getElementById('modalTitle').textContent = product ? 'Editar joya' : 'Nueva joya';
+    submitProductBtn.textContent = product ? 'Guardar cambios' : 'Publicar joya';
+    if(product){
+      prodName.value = product.name;
+      document.getElementById('prodCategory').value = product.category;
+      prodPrice.value = product.price;
+      document.getElementById('prodDesc').value = product.description || '';
+      dropZoneContent.innerHTML = `<img src="${product.image}" alt="Vista previa"><div class="hint" style="margin-top:8px;">Cambiar foto</div>`;
+    }else{
+      dropZoneContent.innerHTML = `<div style="font-size:1.6rem; margin-bottom:6px;">📷</div><div class="hint"><b>Elegí una foto</b> desde tu compu o celular,<br>o arrastrala aquí.</div>`;
+    }
     updateSubmitState();
     uploadOverlay.classList.add('open');
   }
-  function closeUploadModal(){ uploadOverlay.classList.remove('open'); }
+  function closeUploadModal(){ uploadOverlay.classList.remove('open'); editingId = null; }
   document.getElementById('closeUploadBtn').addEventListener('click', closeUploadModal);
   uploadOverlay.addEventListener('click', (e)=>{ if(e.target === uploadOverlay) closeUploadModal(); });
   pinOverlay.addEventListener('click', (e)=>{ if(e.target === pinOverlay) closePin(); });
@@ -651,25 +673,27 @@
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     if(!pendingImageDataUrl) return;
+    const isEditing = !!editingId;
+    const existing = isEditing ? products.find(p => p.id === editingId) : null;
     const product = {
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      id: isEditing ? editingId : (Date.now().toString(36) + Math.random().toString(36).slice(2,7)),
       name: prodName.value.trim(),
       category: document.getElementById('prodCategory').value,
       price: Number(prodPrice.value),
       description: document.getElementById('prodDesc').value.trim(),
       image: pendingImageDataUrl,
-      createdAt: Date.now()
+      createdAt: existing ? existing.createdAt : Date.now()
     };
     submitProductBtn.disabled = true;
-    submitProductBtn.textContent = "Publicando...";
+    submitProductBtn.textContent = isEditing ? "Guardando..." : "Publicando...";
     try{
       await setDoc(doc(productsCol, product.id), product);
       closeUploadModal();
-      showToast('¡Joya publicada!');
+      showToast(isEditing ? '¡Joya actualizada!' : '¡Joya publicada!');
     }catch(err){
       showToast('Error al guardar. Intentá de nuevo.', true);
     }
-    submitProductBtn.textContent = "Publicar joya";
+    submitProductBtn.textContent = isEditing ? "Guardar cambios" : "Publicar joya";
   });
 
   /* ---------- init ---------- */
