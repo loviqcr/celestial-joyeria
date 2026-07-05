@@ -125,19 +125,20 @@
   .category-clouds{
     padding:34px 20px;
   }
-  .category-clouds .pills{justify-content:center; flex:none; gap:18px 22px;}
+  .category-clouds .pills{justify-content:center; flex:none; gap:12px 14px;}
   .category-clouds .pill{
-    background:var(--pearl); color:var(--twilight); border:2px solid var(--sky-deep); box-shadow:var(--shadow);
-    padding:20px 32px; font-size:0.92rem; letter-spacing:0.02em;
-    border-radius:48% 52% 58% 42% / 48% 42% 58% 52%;
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--pearl); color:var(--twilight); border:1px solid var(--sky-deep); box-shadow:var(--shadow);
+    padding:12px 22px; font-size:0.88rem; letter-spacing:0.02em; border-radius:999px;
+    transition:all .18s ease;
   }
-  .category-clouds .pill:nth-child(2n){border-radius:55% 45% 48% 52% / 42% 55% 45% 58%;}
-  .category-clouds .pill:nth-child(3n){border-radius:42% 58% 52% 48% / 58% 48% 52% 42%;}
-  .category-clouds .pill:hover:not(.active){border-color:var(--gold-soft); color:var(--twilight);}
+  .category-clouds .pill-spark{color:var(--gold); font-size:0.9em;}
+  .category-clouds .pill:hover:not(.active){border-color:var(--gold-soft);}
   .category-clouds .pill.active{background:var(--gold); color:var(--pearl-warm); border-color:var(--gold);}
+  .category-clouds .pill.active .pill-spark{color:var(--pearl-warm);}
   @media (max-width:600px){
-    .category-clouds .pill{padding:16px 24px; font-size:0.82rem;}
-    .category-clouds .pills{gap:14px 16px;}
+    .category-clouds .pill{padding:10px 16px; font-size:0.8rem;}
+    .category-clouds .pills{gap:10px 12px;}
   }
   .search-input{
     border:1px solid var(--sky-deep); background:var(--pearl); border-radius:999px;
@@ -582,7 +583,7 @@
 
   function renderPills(){
     pillsWrap.innerHTML = CATEGORIES.map(c =>
-      `<button class="pill ${c===currentFilter?'active':''}" data-cat="${c}">${c}</button>`
+      `<button class="pill ${c===currentFilter?'active':''}" data-cat="${c}"><span class="pill-spark">✦</span>${c}</button>`
     ).join('');
     pillsWrap.querySelectorAll('.pill').forEach(btn=>{
       btn.addEventListener('click', ()=>{
