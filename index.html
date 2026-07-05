@@ -46,6 +46,17 @@
     *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
   }
 
+  /* ---------- ANNOUNCEMENT BAR ---------- */
+  .announcement-bar{background:var(--twilight); color:var(--pearl-warm); overflow:hidden; padding:8px 0;}
+  .announcement-track{display:flex; width:max-content; animation:scrollAnnounce 16s linear infinite;}
+  .announcement-track .scroller-item{
+    padding:0 36px; white-space:nowrap; font-size:0.78rem; letter-spacing:0.03em; font-weight:400;
+  }
+  @keyframes scrollAnnounce{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
   /* ---------- NAV ---------- */
   header.site-nav{
     position:sticky; top:0; z-index:40;
@@ -347,6 +358,13 @@
 </style>
 </head>
 <body>
+
+<div class="announcement-bar" aria-label="Envío gratis en compras mayores a ₡12,000">
+  <div class="announcement-track">
+    <span class="scroller-item scroller-item--text rte h6 fw-400">✦ Envío gratis en compras mayores a ₡12,000 ✦</span>
+    <span class="scroller-item scroller-item--text rte h6 fw-400">✦ Envío gratis en compras mayores a ₡12,000 ✦</span>
+  </div>
+</div>
 
 <header class="site-nav">
   <div class="brand">
