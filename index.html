@@ -456,9 +456,9 @@
       <h2>Acceso de administrador</h2>
       <button class="close-x" style="position:absolute; right:0;" id="closePinBtn">✕</button>
     </div>
-    <p style="color:var(--twilight-soft); font-size:0.85rem; margin-top:-6px;">Ingresá el código para subir o eliminar joyas.</p>
+    <p style="color:var(--twilight-soft); font-size:0.85rem; margin-top:-6px;">Ingresá la contraseña para subir o eliminar joyas.</p>
     <div class="field pin-field" style="margin-top:16px;">
-      <input type="password" id="pinInput" maxlength="20" placeholder="••••">
+      <input type="password" id="pinInput" maxlength="100" placeholder="••••••••">
     </div>
     <button class="submit-btn" id="pinSubmitBtn">Entrar</button>
   </div>
@@ -559,6 +559,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import { initializeFirestore, persistentLocalCache, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDjahr59eyXNbIdFmp85Vr-EODVb8HWmMw",
@@ -572,8 +573,8 @@
   const db = initializeFirestore(firebaseApp, { localCache: persistentLocalCache() });
   const productsCol = collection(db, 'productos');
   const heroCol = collection(db, 'hero_fotos');
-
-  const ADMIN_PIN = "CJ07.";
+  const auth = getAuth(firebaseApp);
+  const ADMIN_EMAIL = "loviqcr@gmail.com";
 
   const CATEGORIES = ["Todos","Anillos","Collares","Aretes","Pulseras","Chokers","Grabados"];
   let products = [];
@@ -638,9 +639,9 @@
       return `
       <div class="card" data-id="${p.id}">
         <div class="photo-wrap${soldOut ? ' out' : ''}">
-          <img src="${p.image}" alt="${escapeHtml(p.name)}">
+          <img src="${safeImg(p.image)}" alt="${escapeHtml(p.name)}">
           <span class="sparkle">✦</span>
-          <span class="tag">${p.category}</span>
+          <span class="tag">${escapeHtml(p.category)}</span>
           ${soldOut ? '<span class="sold-out-badge">Agotado</span>' : ''}
           ${isAdmin ? `<button class="edit-btn" data-edit="${p.id}" aria-label="Editar">✎</button><button class="delete-btn" data-del="${p.id}" aria-label="Eliminar">✕</button>` : ''}
         </div>
@@ -694,7 +695,15 @@
   function escapeHtml(str){
     const d = document.createElement('div');
     d.textContent = str;
-    return d.innerHTML;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  const BLANK_IMG = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7";
+  function isValidImageSrc(src){
+    return typeof src === 'string' && /^data:image\/(jpeg|jpg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(src);
+  }
+  function safeImg(src){
+    return isValidImageSrc(src) ? src : BLANK_IMG;
   }
 
   function loadProducts(){
@@ -716,6 +725,7 @@
   /* ---------- PIN / admin gate ---------- */
   const pinOverlay = document.getElementById('pinOverlay');
   const pinInput = document.getElementById('pinInput');
+  const pinSubmitBtn = document.getElementById('pinSubmitBtn');
 
   function openPin(action){
     pendingAction = action;
@@ -729,30 +739,43 @@
   document.getElementById('pinSubmitBtn').addEventListener('click', submitPin);
   pinInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') submitPin(); });
 
-  function submitPin(){
-    if(pinInput.value === ADMIN_PIN){
-      isAdmin = true;
-      document.getElementById('openUploadBtn').style.display = '';
-      document.getElementById('heroEditBtn').style.display = '';
+  async function submitPin(){
+    const password = pinInput.value;
+    pinSubmitBtn.disabled = true;
+    try{
+      await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
       closePin();
-      renderGrid();
       if(pendingAction) pendingAction();
       pendingAction = null;
-    }else{
+    }catch(err){
       const modal = pinOverlay.querySelector('.modal');
       modal.classList.remove('shake');
       void modal.offsetWidth;
       modal.classList.add('shake');
-      showToast('Código incorrecto', true);
+      showToast('Contraseña incorrecta', true);
     }
+    pinSubmitBtn.disabled = false;
   }
+
+  onAuthStateChanged(auth, (user)=>{
+    isAdmin = !!user;
+    document.getElementById('openUploadBtn').style.display = isAdmin ? '' : 'none';
+    document.getElementById('heroEditBtn').style.display = isAdmin ? '' : 'none';
+    renderGrid();
+  });
 
   function requestUpload(){
     if(isAdmin){ openUploadModal(); }
     else{ openPin(openUploadModal); }
   }
   document.getElementById('openUploadBtn').addEventListener('click', requestUpload);
-  document.getElementById('adminLoginBtn').addEventListener('click', ()=>{ if(!isAdmin) openPin(null); });
+  document.getElementById('adminLoginBtn').addEventListener('click', ()=>{
+    if(isAdmin){
+      if(confirm('¿Cerrar sesión de administrador?')) signOut(auth);
+    }else{
+      openPin(null);
+    }
+  });
   document.getElementById('heroEditBtn').addEventListener('click', ()=>{
     if(isAdmin){ openHeroModal(); } else { openPin(openHeroModal); }
   });
@@ -780,7 +803,7 @@
       prodPrice.value = product.price;
       prodStock.value = product.stock ?? 0;
       document.getElementById('prodDesc').value = product.description || '';
-      dropZoneContent.innerHTML = `<img src="${product.image}" alt="Vista previa"><div class="hint" style="margin-top:8px;">Cambiar foto</div>`;
+      dropZoneContent.innerHTML = `<img src="${safeImg(product.image)}" alt="Vista previa"><div class="hint" style="margin-top:8px;">Cambiar foto</div>`;
     }else{
       dropZoneContent.innerHTML = `<div style="font-size:1.6rem; margin-bottom:6px;">📷</div><div class="hint"><b>Elegí una foto</b> desde tu compu o celular,<br>o arrastrala aquí.</div>`;
     }
@@ -904,7 +927,7 @@
     heroFallback.style.display = 'none';
     heroCarousel.style.display = '';
     heroCarousel.innerHTML = heroPhotos.map((p, i)=>
-      `<img src="${p.image}" class="${i === heroIndex ? 'active' : ''}" alt="Joya destacada">`
+      `<img src="${safeImg(p.image)}" class="${i === heroIndex ? 'active' : ''}" alt="Joya destacada">`
     ).join('');
     if(heroPhotos.length > 1){
       heroTimer = setInterval(()=>{
@@ -921,7 +944,7 @@
     }
     heroPhotoGrid.innerHTML = heroPhotos.map(p => `
       <div class="thumb">
-        <img src="${p.image}" alt="">
+        <img src="${safeImg(p.image)}" alt="">
         <button data-hero-del="${p.id}" aria-label="Eliminar">✕</button>
       </div>
     `).join('');
@@ -1056,7 +1079,7 @@
     }
     cartItemsEl.innerHTML = cart.map(i => `
       <div class="cart-item">
-        <img src="${i.image}" alt="">
+        <img src="${safeImg(i.image)}" alt="">
         <div class="cart-item-info">
           <div class="cart-item-name">${escapeHtml(i.name)}</div>
           <div class="cart-item-price">${money(i.price)}</div>
