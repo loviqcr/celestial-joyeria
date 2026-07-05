@@ -50,7 +50,8 @@
   .announcement-bar{background:var(--twilight); color:var(--pearl-warm); overflow:hidden; padding:8px 0;}
   .announcement-track{display:flex; width:max-content; animation:scrollAnnounce 16s linear infinite;}
   .announcement-track .scroller-item{
-    padding:0 36px; white-space:nowrap; font-size:0.78rem; letter-spacing:0.03em; font-weight:400;
+    padding:0 clamp(14px, 4vw, 36px); white-space:nowrap;
+    font-size:clamp(0.6rem, 2.6vw, 0.78rem); letter-spacing:0.02em; font-weight:400;
   }
   @keyframes scrollAnnounce{
     from{transform:translateX(0);}
