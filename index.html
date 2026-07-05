@@ -558,7 +558,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { initializeFirestore, persistentLocalCache, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDjahr59eyXNbIdFmp85Vr-EODVb8HWmMw",
@@ -569,7 +569,7 @@
     appId: "1:4944190111:web:d7d284d349a409d634a0aa"
   };
   const firebaseApp = initializeApp(firebaseConfig);
-  const db = getFirestore(firebaseApp);
+  const db = initializeFirestore(firebaseApp, { localCache: persistentLocalCache() });
   const productsCol = collection(db, 'productos');
   const heroCol = collection(db, 'hero_fotos');
 
