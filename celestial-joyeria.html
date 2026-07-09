@@ -81,6 +81,16 @@
     transition:all .2s ease;
   }
   .ghost-btn:hover{background:var(--gold-soft); color:var(--twilight);}
+  @media (max-width:600px){
+    header.site-nav{padding:10px 14px; gap:8px;}
+    .logo-badge{width:38px; height:38px;}
+    .brand-text .sub{font-size:0.6rem;}
+    .nav-actions{gap:6px;}
+    .ghost-btn{padding:7px 12px; font-size:0.72rem; letter-spacing:0;}
+  }
+  @media (max-width:360px){
+    .nav-actions{flex-wrap:wrap; justify-content:flex-end; row-gap:6px;}
+  }
 
   /* ---------- HERO ---------- */
   .hero{
@@ -578,7 +588,7 @@
   const auth = getAuth(firebaseApp);
   const ADMIN_EMAIL = "loviqcr@gmail.com";
 
-  const CATEGORIES = ["Todos","Anillos","Collares","Aretes","Pulseras","Chokers","Grabados","Ofertas"];
+  const CATEGORIES = ["Ofertas","Todos","Anillos","Collares","Aretes","Pulseras","Chokers","Grabados"];
   let products = [];
   let isAdmin = false;
   let currentFilter = "Todos";
