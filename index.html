@@ -374,6 +374,7 @@
   </div>
   <div class="nav-actions">
     <a href="#catalogo" class="ghost-btn">Ver catálogo</a>
+    <a href="#catalogo" class="ghost-btn" id="ofertasNavBtn">🏷 Ofertas</a>
   </div>
 </header>
 
@@ -495,6 +496,7 @@
           <option>Pulseras</option>
           <option>Chokers</option>
           <option>Grabados</option>
+          <option>Ofertas</option>
         </select>
       </div>
       <div class="field">
@@ -576,7 +578,7 @@
   const auth = getAuth(firebaseApp);
   const ADMIN_EMAIL = "loviqcr@gmail.com";
 
-  const CATEGORIES = ["Todos","Anillos","Collares","Aretes","Pulseras","Chokers","Grabados"];
+  const CATEGORIES = ["Todos","Anillos","Collares","Aretes","Pulseras","Chokers","Grabados","Ofertas"];
   let products = [];
   let isAdmin = false;
   let currentFilter = "Todos";
@@ -719,6 +721,12 @@
 
   document.getElementById('searchInput').addEventListener('input', (e)=>{
     searchTerm = e.target.value.toLowerCase();
+    renderGrid();
+  });
+
+  document.getElementById('ofertasNavBtn').addEventListener('click', ()=>{
+    currentFilter = "Ofertas";
+    renderPills();
     renderGrid();
   });
 
