@@ -81,29 +81,13 @@
     transition:all .2s ease;
   }
   .ghost-btn:hover{background:var(--gold-soft); color:var(--twilight);}
-  .offer-nav-wrap{position:relative; display:inline-flex; align-items:center;}
   .ghost-btn--offer{
-    display:inline-flex; align-items:center; gap:6px;
-    background:var(--pearl); color:var(--gold-deep); border-color:var(--gold-soft);
-    padding:5px 5px 5px 14px;
-    box-shadow:0 0 0 0 rgba(201,166,107,0.5);
+    background:linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color:var(--pearl-warm); border-color:var(--gold-deep);
+    box-shadow:0 0 0 0 rgba(201,166,107,0.55);
     animation:offerPulse 2.6s ease-in-out infinite;
   }
-  .ghost-btn--offer:hover{background:var(--gold-soft); color:var(--gold-deep);}
-  .ghost-btn--offer .offer-icon{font-size:1em;}
-  .ghost-btn--offer .offer-plus{color:var(--gold); font-weight:700;}
-  .ghost-btn--offer .offer-label{font-weight:600;}
-  .ghost-btn--offer .offer-badge{
-    background:linear-gradient(135deg, var(--gold), var(--gold-deep));
-    color:var(--pearl-warm); font-size:0.68rem; font-weight:700; letter-spacing:0.01em;
-    padding:7px 12px; border-radius:999px; white-space:nowrap; line-height:1.2;
-  }
-  .offer-edit-btn{
-    position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%;
-    background:rgba(255,253,249,0.95); border:1px solid var(--sky-deep); color:var(--twilight);
-    font-size:0.65rem; display:flex; align-items:center; justify-content:center;
-    box-shadow:var(--shadow); z-index:2; padding:0;
-  }
+  .ghost-btn--offer:hover{background:linear-gradient(135deg, var(--gold-deep), var(--gold)); color:var(--pearl-warm);}
   @keyframes offerPulse{
     0%, 100%{box-shadow:0 0 0 0 rgba(201,166,107,0.45);}
     50%{box-shadow:0 0 0 7px rgba(201,166,107,0);}
@@ -114,13 +98,9 @@
     .brand-text .sub{font-size:0.6rem;}
     .nav-actions{gap:6px;}
     .ghost-btn{padding:7px 12px; font-size:0.72rem; letter-spacing:0;}
-    .ghost-btn--offer{padding:4px 4px 4px 10px; gap:4px;}
-    .ghost-btn--offer .offer-badge{padding:6px 9px; font-size:0.6rem;}
-    .ghost-btn--offer .offer-plus{display:none;}
   }
   @media (max-width:360px){
     .nav-actions{flex-wrap:wrap; justify-content:flex-end; row-gap:6px;}
-    .ghost-btn--offer .offer-label{display:none;}
   }
 
   /* ---------- HERO ---------- */
@@ -188,19 +168,31 @@
   .category-clouds .pill:hover:not(.active){border-color:var(--gold-soft);}
   .category-clouds .pill.active{background:var(--gold); color:var(--pearl-warm); border-color:var(--gold);}
   .category-clouds .pill.active .pill-spark{color:var(--pearl-warm);}
-  .pill--offer{position:relative; overflow:visible;}
-  .pill-bubbles{position:absolute; inset:0; pointer-events:none;}
-  .pill-bubbles i{
-    position:absolute; border-radius:50%; background:var(--gold);
-    box-shadow:0 0 5px rgba(201,166,107,0.75);
-    animation:twinkle 3.2s ease-in-out infinite;
+  .pill--offer{
+    position:relative; overflow:visible; padding:7px 7px 7px 18px;
+    box-shadow:var(--shadow), 0 0 0 0 rgba(201,166,107,0.5);
+    animation:offerPulse 2.6s ease-in-out infinite;
   }
-  .pill-bubbles i:nth-child(1){width:6px; height:6px; top:-4px; left:12%; animation-delay:0s;}
-  .pill-bubbles i:nth-child(2){width:4px; height:4px; top:-3px; right:14%; animation-delay:0.7s;}
-  .pill-bubbles i:nth-child(3){width:5px; height:5px; bottom:-4px; left:48%; animation-delay:1.4s;}
+  .pill--offer .offer-icon{font-size:1em;}
+  .pill--offer .offer-plus{color:var(--gold); font-weight:700;}
+  .pill--offer .offer-badge{
+    background:linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color:var(--pearl-warm); font-size:0.72rem; font-weight:700; letter-spacing:0.01em;
+    padding:8px 14px; border-radius:999px; white-space:nowrap; line-height:1.2;
+  }
+  .pill--offer.active .offer-badge{box-shadow:0 0 0 1px var(--pearl-warm) inset;}
+  .offer-edit-btn{
+    position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%;
+    background:rgba(255,253,249,0.95); border:1px solid var(--sky-deep); color:var(--twilight);
+    font-size:0.65rem; display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow); z-index:2; padding:0;
+  }
   @media (max-width:600px){
     .category-clouds .pill{padding:10px 16px; font-size:0.8rem;}
     .category-clouds .pills{gap:10px 12px;}
+    .pill--offer{padding:6px 6px 6px 14px;}
+    .pill--offer .offer-badge{padding:6px 10px; font-size:0.64rem;}
+    .pill--offer .offer-plus{display:none;}
   }
   .search-input{
     border:1px solid var(--sky-deep); background:var(--pearl); border-radius:999px;
@@ -425,15 +417,7 @@
   </div>
   <div class="nav-actions">
     <a href="#catalogo" class="ghost-btn">Ver catálogo</a>
-    <div class="offer-nav-wrap">
-      <a href="#catalogo" class="ghost-btn ghost-btn--offer" id="ofertasNavBtn">
-        <span class="offer-icon">🏷</span>
-        <span class="offer-plus">+</span>
-        <span class="offer-label">Ofertas</span>
-        <span class="offer-badge" id="offerBadgeText">HASTA -50%</span>
-      </a>
-      <button class="offer-edit-btn" id="offerEditBtn" aria-label="Editar texto de la oferta" style="display:none;">✎</button>
-    </div>
+    <a href="#catalogo" class="ghost-btn ghost-btn--offer" id="ofertasNavBtn">🏷 Ofertas</a>
   </div>
 </header>
 
@@ -642,6 +626,7 @@
   let isAdmin = false;
   let currentFilter = "Todos";
   let searchTerm = "";
+  let offerBadge = "HASTA -50%";
   let pendingImageDataUrl = null;
   let pendingAction = null;
   let editingId = null;
@@ -662,16 +647,35 @@
   }
 
   function renderPills(){
-    pillsWrap.innerHTML = CATEGORIES.map(c =>
-      `<button class="pill ${c===currentFilter?'active':''}${c==='Ofertas'?' pill--offer':''}" data-cat="${c}"><span class="pill-spark">✦</span>${c}${c==='Ofertas' ? '<span class="pill-bubbles" aria-hidden="true"><i></i><i></i><i></i></span>' : ''}</button>`
-    ).join('');
+    pillsWrap.innerHTML = CATEGORIES.map(c => {
+      const active = c===currentFilter ? 'active' : '';
+      if(c === 'Ofertas'){
+        return `<button class="pill ${active} pill--offer" data-cat="${c}">
+          <span class="pill-spark">✦</span>
+          <span class="offer-icon">🏷</span>
+          <span class="offer-plus">+</span>
+          Ofertas
+          <span class="offer-badge">${escapeHtml(offerBadge)}</span>
+          ${isAdmin ? '<span class="offer-edit-btn" data-offer-edit aria-label="Editar oferta">✎</span>' : ''}
+        </button>`;
+      }
+      return `<button class="pill ${active}" data-cat="${c}"><span class="pill-spark">✦</span>${c}</button>`;
+    }).join('');
     pillsWrap.querySelectorAll('.pill').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
+      btn.addEventListener('click', (e)=>{
+        if(e.target.closest('[data-offer-edit]')) return;
         currentFilter = btn.dataset.cat;
         renderPills();
         renderGrid();
       });
     });
+    const offerEdit = pillsWrap.querySelector('[data-offer-edit]');
+    if(offerEdit){
+      offerEdit.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(isAdmin){ editOfferBadge(); } else { openPin(editOfferBadge); }
+      });
+    }
   }
 
   function renderGrid(){
@@ -790,15 +794,14 @@
   });
 
   /* ---------- Offer badge (editable) ---------- */
-  const offerBadgeText = document.getElementById('offerBadgeText');
-  const offerEditBtn = document.getElementById('offerEditBtn');
   const offerSettingsDoc = doc(db, 'settings', 'offers');
   onSnapshot(offerSettingsDoc, (snap)=>{
     const data = snap.data();
-    offerBadgeText.textContent = (data && data.badge) ? data.badge : 'HASTA -50%';
+    offerBadge = (data && data.badge) ? data.badge : 'HASTA -50%';
+    renderPills();
   });
   function editOfferBadge(){
-    const next = prompt('Texto del badge de ofertas:', offerBadgeText.textContent);
+    const next = prompt('Texto del badge de ofertas:', offerBadge);
     if(next === null) return;
     const trimmed = next.trim();
     if(!trimmed) return;
@@ -806,11 +809,6 @@
       .then(()=> showToast('Oferta actualizada'))
       .catch(()=> showToast('Error al guardar. Intentá de nuevo.', true));
   }
-  offerEditBtn.addEventListener('click', (e)=>{
-    e.preventDefault();
-    e.stopPropagation();
-    if(isAdmin){ editOfferBadge(); } else { openPin(editOfferBadge); }
-  });
 
   /* ---------- PIN / admin gate ---------- */
   const pinOverlay = document.getElementById('pinOverlay');
@@ -851,7 +849,7 @@
     isAdmin = !!user;
     document.getElementById('openUploadBtn').style.display = isAdmin ? '' : 'none';
     document.getElementById('heroEditBtn').style.display = isAdmin ? '' : 'none';
-    document.getElementById('offerEditBtn').style.display = isAdmin ? '' : 'none';
+    renderPills();
     renderGrid();
   });
 
