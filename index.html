@@ -168,6 +168,16 @@
   .category-clouds .pill:hover:not(.active){border-color:var(--gold-soft);}
   .category-clouds .pill.active{background:var(--gold); color:var(--pearl-warm); border-color:var(--gold);}
   .category-clouds .pill.active .pill-spark{color:var(--pearl-warm);}
+  .pill--offer{position:relative; overflow:visible;}
+  .pill-bubbles{position:absolute; inset:0; pointer-events:none;}
+  .pill-bubbles i{
+    position:absolute; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 5px rgba(201,166,107,0.75);
+    animation:twinkle 3.2s ease-in-out infinite;
+  }
+  .pill-bubbles i:nth-child(1){width:6px; height:6px; top:-4px; left:12%; animation-delay:0s;}
+  .pill-bubbles i:nth-child(2){width:4px; height:4px; top:-3px; right:14%; animation-delay:0.7s;}
+  .pill-bubbles i:nth-child(3){width:5px; height:5px; bottom:-4px; left:48%; animation-delay:1.4s;}
   @media (max-width:600px){
     .category-clouds .pill{padding:10px 16px; font-size:0.8rem;}
     .category-clouds .pills{gap:10px 12px;}
@@ -625,7 +635,7 @@
 
   function renderPills(){
     pillsWrap.innerHTML = CATEGORIES.map(c =>
-      `<button class="pill ${c===currentFilter?'active':''}" data-cat="${c}"><span class="pill-spark">✦</span>${c}</button>`
+      `<button class="pill ${c===currentFilter?'active':''}${c==='Ofertas'?' pill--offer':''}" data-cat="${c}"><span class="pill-spark">✦</span>${c}${c==='Ofertas' ? '<span class="pill-bubbles" aria-hidden="true"><i></i><i></i><i></i></span>' : ''}</button>`
     ).join('');
     pillsWrap.querySelectorAll('.pill').forEach(btn=>{
       btn.addEventListener('click', ()=>{
